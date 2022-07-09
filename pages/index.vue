@@ -1,16 +1,69 @@
 <template>
-  <div>
-    <h1>홈페이지</h1>
-    <p>넉스트 시작하기</p>
+  <div class="app">
+    <main>
+      <div>
+        <input type="text" />
+      </div>
+      <ul>
+        <li v-for="product in products" :key="product.id" class="item flex">
+          <img class="product-image" :src="product.imageUrl" :alt="product.name" />
+          <p>{{ product.name }}</p>
+          <span>{{ product.price }}</span>
+        </li>
+      </ul>
+    </main>
   </div>
 </template>
-
 <script>
+import axios from 'axios'
 export default {
-  name: 'HomePage'
+  name: 'MainPage',
+  components: {},
+  async asyncData() {
+    const response = await axios.get('http://localhost:8080/products')
+    const products = response.data.map((product) => {
+      return {
+        ...product,
+        imageUrl: `${product.imageUrl}?random=${Math.random()}`,
+      }
+    })
+    return { products }
+  },
+  data() {
+    return {}
+  },
 }
 </script>
-
-<style>
-
+<style scoped>
+.flex {
+  display: flex;
+  justify-content: center;
+}
+.item {
+  display: inline-block;
+  width: 400px;
+  height: 300px;
+  text-align: center;
+  margin: 0 0.5rem;
+  cursor: pointer;
+}
+.product-image {
+  width: 400px;
+  height: 250px;
+}
+.app {
+  position: relative;
+}
+.cart-wrapper {
+  position: sticky;
+  float: right;
+  bottom: 50px;
+  right: 50px;
+}
+.cart-wrapper .btn {
+  display: inline-block;
+  height: 40px;
+  font-size: 1rem;
+  font-weight: 500;
+}
 </style>
