@@ -2,23 +2,37 @@
   <div class="app">
     <main>
       <div>
-        <input type="text" />
+        <search-input v-model="searchKeyword" @search="searchProducts" />
       </div>
       <ul>
-        <li v-for="product in products" :key="product.id" class="item flex">
-          <img class="product-image" :src="product.imageUrl" :alt="product.name" />
+        <li
+          v-for="product in products"
+          :key="product.id"
+          class="item flex"
+          @click="routeToProductDetail(product.id)"
+        >
+          <img
+            class="product-image"
+            :src="product.imageUrl"
+            :alt="product.name"
+          />
           <p>{{ product.name }}</p>
           <span>{{ product.price }}</span>
         </li>
       </ul>
+      <div class="cart-wrapper">
+        <button class="btn" @click="routeToCartPage">장바구니 바로가기</button>
+      </div>
     </main>
   </div>
 </template>
 <script>
 import axios from 'axios'
+import SearchInput from '@/components/SearchInput.vue'
+import { fetchProductByKeyword } from '@/api/index'
 export default {
   name: 'MainPage',
-  components: {},
+  components: { SearchInput },
   async asyncData() {
     const response = await axios.get('http://localhost:8080/products')
     const products = response.data.map((product) => {
@@ -30,7 +44,26 @@ export default {
     return { products }
   },
   data() {
-    return {}
+    return {
+      searchKeyword: '',
+    }
+  },
+  methods: {
+    routeToProductDetail(id) {
+      this.$router.push(`product/${id}`)
+    },
+    async searchProducts() {
+      const response = await fetchProductByKeyword(this.searchKeyword)
+      this.products = response.data.map((product) => {
+        return {
+          ...product,
+          imageUrl: `${product.imageUrl}?random=${Math.random()}`,
+        }
+      })
+    },
+    routeToCartPage() {
+      this.$router.push('/cart')
+    },
   },
 }
 </script>
