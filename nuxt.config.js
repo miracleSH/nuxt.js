@@ -36,5 +36,9 @@ export default {
   build: {},
   server: {
     port: process.env.NOVE_ENV === 'production' ? null : 3000
+  },
+  // env config
+  env : {
+    baseURL: process.env.NOVE_ENV === 'production' ? 'https://my-json-server.typicode.com/miracleSH/nuxt-api' : 'http://localhost:8080'
   }
 }
